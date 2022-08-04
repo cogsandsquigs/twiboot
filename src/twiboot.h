@@ -33,6 +33,15 @@ public:
     void Flash(uint8_t *buf, int len);
 
     /**
+     * Verifies that the device contains the same data as the buffer.
+     * Uses the CRC16 standard to verify the data.
+     *
+     * @param buf
+     * @param len
+     */
+    bool Verify(uint8_t *buf, int len);
+
+    /**
      * Starts the main (non-bootloader) application on the device. Automatically
      * lets go of the Wire buffer.
      */

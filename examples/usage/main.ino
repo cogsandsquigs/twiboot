@@ -92,11 +92,27 @@ Twiboot twiboot(SLAVE_ADDR);
 // on a particle device. If you run this first, then the AVR MCU with
 // Twiboot, it could corrupt the entire device! Make sure that the MCU is
 // in twiboot mode before running any of the following code.
-void loop()
+void setup()
 {
+    Serial.begin(9600);
     twiboot.AbortBootTimeout();
     twiboot.Flash(prog, sizeof(prog));
-    twiboot.JumpToApp();
+}
+
+void loop()
+{
+    bool verified = false; // twiboot.Verify(prog, sizeof(prog));
+    Serial.println("Verifying...");
+    if (verified)
+    {
+        Serial.println("Verified!");
+    }
+    else
+    {
+        Serial.println("Verification failed!");
+    }
+
+    // twiboot.JumpToApp(); // No more twiboot access from here on!
 }
 
 #define TWI_BUFFER_SIZE 140
