@@ -31,6 +31,43 @@ bool Twiboot::AbortBootTimeout()
     return Wire.endTransmission() == 0; // if there are any errors, return false. Otherwise, return true.
 }
 
+void Twiboot::GetBootloaderVersion(char *buf)
+{
+    startWire();
+    Wire.beginTransmission(addr);
+    Wire.write(0x01);
+    Wire.endTransmission();
+    Wire.requestFrom(addr, 16);
+    int i = 0;
+    while (Wire.available())
+    {
+        buf[i] = Wire.read();
+        i++;
+    }
+}
+
+void Twiboot::GetChipInfo(uint64_t *signature, uint8_t *pageSize, uint16_t *flashSize, uint16_t *eepromSize)
+{
+    startWire();
+    Wire.beginTransmission(addr);
+    Wire.write(0x02);
+    Wire.write(0x00);
+    Wire.write(0x00);
+    Wire.write(0x00);
+    Wire.endTransmission();
+    Wire.requestFrom(addr, 8);
+    while (!Wire.available())
+        ;
+    *signature = Wire.read() << 16;
+    *signature |= Wire.read() << 8;
+    *signature |= Wire.read();
+    *pageSize = Wire.read();
+    *flashSize = Wire.read() << 8;
+    *flashSize |= Wire.read();
+    *eepromSize = Wire.read() << 8;
+    *eepromSize |= Wire.read();
+}
+
 void Twiboot::Flash(uint8_t *buf, int len)
 {
     startWire();

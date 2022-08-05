@@ -29,6 +29,25 @@ public:
     bool AbortBootTimeout();
 
     /**
+     * Gets the version of the bootloader.
+     *
+     * @param buf The buffer to store the version in.
+     *
+     * @returns The version of the bootloader as an ascii string.
+     */
+    void GetBootloaderVersion(char *buf);
+
+    /**
+     * Gets the chip's information
+     *
+     * @param signature The signature of the chip.
+     * @param pageSize The size of a page in the chip, in bytes.
+     * @param flashSize The size of the flash in the chip, in bytes.
+     * @param eepromSize The size of the EEPROM in the chip, in bytes.
+     */
+    void GetChipInfo(uint64_t *signature, uint8_t *pageSize, uint16_t *flashSize, uint16_t *eepromSize);
+
+    /**
      * Flashes a buffer of data to the device
      *
      * @param buf The data to write.

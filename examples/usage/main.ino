@@ -86,45 +86,34 @@ unsigned char prog[1024] = {
     0x80, 0xE0, 0x0E, 0x94, 0x70, 0x00, 0x0E, 0x94, 0xDD, 0x00, 0x20, 0x97,
     0xA1, 0xF3, 0x0E, 0x94, 0x00, 0x00, 0xF1, 0xCF, 0xF8, 0x94, 0xFF, 0xCF};
 
-Twiboot twiboot(SLAVE_ADDR);
+Twiboot twiboot(SLAVE_ADDR); // Initiallize a twiboot object
 
-// Install the bootloader first (Nothng else!), and then run this program
-// on a particle device. If you run this first, then the AVR MCU with
-// Twiboot, it could corrupt the entire device! Make sure that the MCU is
-// in twiboot mode before running any of the following code.
 void setup()
 {
     Serial.begin(9600);
-    twiboot.AbortBootTimeout();
-    twiboot.Flash(prog, sizeof(prog));
 }
 
 void loop()
 {
-    bool verified = false; // twiboot.Verify(prog, sizeof(prog));
+    while (!twiboot.AbortBootTimeout()) // wait for the bootloader to properly initialize
+        ;
+
+    Serial.println("Bootloader initialized!");
+    Serial.println("Flashing...");
+
+    twiboot.Flash(prog, sizeof(prog)); // flash the program
+
+    Serial.println("Flashed!");
+
     Serial.println("Verifying...");
-    if (verified)
+    if (twiboot.Verify(prog, sizeof(prog))) // verify the program
     {
         Serial.println("Verified!");
+        Serial.println("All done, going to the app now!");
+        twiboot.JumpToApp();
     }
     else
     {
-        Serial.println("Verification failed!");
+        Serial.println("Verification failed! Trying again...");
     }
-
-    // twiboot.JumpToApp(); // No more twiboot access from here on!
-}
-
-#define TWI_BUFFER_SIZE 140
-
-hal_i2c_config_t acquireWireBuffer()
-{
-    hal_i2c_config_t config = {
-        .size = sizeof(hal_i2c_config_t),
-        .version = HAL_I2C_CONFIG_VERSION_1,
-        .rx_buffer = new (std::nothrow) uint8_t[TWI_BUFFER_SIZE],
-        .rx_buffer_size = TWI_BUFFER_SIZE,
-        .tx_buffer = new (std::nothrow) uint8_t[TWI_BUFFER_SIZE],
-        .tx_buffer_size = TWI_BUFFER_SIZE};
-    return config;
 }
