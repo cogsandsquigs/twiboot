@@ -36,4 +36,4 @@ note over m328p: Starts the main app.
 
 Make sure that your MCU of choice has [twiboot](https://github.com/orempel/twiboot) installed. A makefile
 is included here, however, this is mainly for my own purposes (for custom-building twiboot) and is not
-recommended for use.
+recommended for use. It is recommended to use the makefile in the twiboot subfolder (it's a gitmodule of twiboot).
