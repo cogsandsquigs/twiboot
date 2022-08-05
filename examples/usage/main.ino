@@ -99,6 +99,29 @@ void loop()
         ;
 
     Serial.println("Bootloader initialized!");
+
+    char btldr_ver[16];
+    twiboot.GetBootloaderVersion(btldr_ver);
+    Serial.print("Bootloader version: ");
+    Serial.println(btldr_ver);
+
+    // Get chip information
+    uint64_t signature;
+    uint8_t pageSize;
+    uint16_t flashSize;
+    uint16_t eepromSize;
+
+    twiboot.GetChipInfo(&signature, &pageSize, &flashSize, &eepromSize);
+
+    Serial.print("Signature: ");
+    Serial.println(signature, HEX);
+    Serial.print("Page size: ");
+    Serial.println(pageSize);
+    Serial.print("Flash size: ");
+    Serial.println(flashSize);
+    Serial.print("EEPROM size: ");
+    Serial.println(eepromSize);
+
     Serial.println("Flashing...");
 
     twiboot.Flash(prog, sizeof(prog)); // flash the program
