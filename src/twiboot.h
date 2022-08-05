@@ -40,8 +40,8 @@ public:
      * Verifies that the device contains the same data as the buffer.
      * Uses the CRC16 standard to verify the data.
      *
-     * @param buf
-     * @param len
+     * @param buf The data to verify that the device contains.
+     * @param len The length of the data.
      */
     bool Verify(uint8_t *buf, int len);
 
