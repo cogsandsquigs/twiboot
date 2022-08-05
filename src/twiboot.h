@@ -4,6 +4,8 @@
 #include <inttypes.h>
 #include "Particle.h"
 
+#include "crc.h"
+
 class Twiboot
 {
 public:
@@ -21,8 +23,10 @@ public:
 
     /**
      * Stops the bootloader from automatically timing out and starting the application.
+     *
+     * @returns True if the operation was successful. Otherwise, false.
      */
-    void AbortBootTimeout();
+    bool AbortBootTimeout();
 
     /**
      * Flashes a buffer of data to the device
@@ -50,5 +54,20 @@ public:
 private:
     uint8_t addr;
 };
+
+/* Need to include this to increase TWI/I2C buffer size */
+#define TWI_BUFFER_SIZE 140
+
+hal_i2c_config_t acquireWireBuffer()
+{
+    hal_i2c_config_t config = {
+        .size = sizeof(hal_i2c_config_t),
+        .version = HAL_I2C_CONFIG_VERSION_1,
+        .rx_buffer = new (std::nothrow) uint8_t[TWI_BUFFER_SIZE],
+        .rx_buffer_size = TWI_BUFFER_SIZE,
+        .tx_buffer = new (std::nothrow) uint8_t[TWI_BUFFER_SIZE],
+        .tx_buffer_size = TWI_BUFFER_SIZE};
+    return config;
+}
 
 #endif // twiboot_h

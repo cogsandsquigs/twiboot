@@ -16,13 +16,16 @@
 #ifndef _crc_h
 #define _crc_h
 
+#include "Particle.h" // Making sure this compiles and links with the Particle SDK
+
 // #define FALSE 0
 // #define TRUE !FALSE
 
 /*
  * Select the CRC standard from the list that follows.
  */
-#define CRC16
+
+#define CRC32
 
 #if defined(CRC_CCITT)
 

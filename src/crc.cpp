@@ -8,13 +8,16 @@
  *				defined in the header file crc.h.  The implementations
  *				here should stand up to further additions to that list.
  *
+ *              From Ian: Had to modify some of these files b/c
+ *              the compiler was complaining about how these functions
+ *              were not defined.
+ *
  *
  * Copyright (c) 2000 by Michael Barr.  This software is placed into
  * the public domain and may be used for any purpose.  However, this
  * notice must not be changed or removed and no warranty is either
  * expressed or implied by its publication or distribution.
  **********************************************************************/
-
 #include "crc.h"
 
 /*
