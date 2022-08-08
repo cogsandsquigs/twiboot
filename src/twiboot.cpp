@@ -133,8 +133,10 @@ bool Twiboot::Verify(uint8_t *buf, int len)
         Wire.endTransmission();
         Wire.requestFrom(addr, 128);
 
-        int j = 0;
-        while (Wire.available())
+        while (!Wire.available())
+            ;
+
+        for (int j = 0; j < 128; j++)
         {
             if ((i * 128 + j) > len)
             {
