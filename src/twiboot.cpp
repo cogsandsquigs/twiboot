@@ -105,13 +105,12 @@ void Twiboot::Flash(uint8_t *buf, int len)
 bool Twiboot::Verify(uint8_t *buf, int len)
 {
     crcInit(); // has to be called before crcFast() to update the CRC tables
-    crc checksum = crcFast(buf, len);
-    startWire();
 
-    uint8_t read[len];
-
-    for (int i = 0; i < (len / 128) + 1; i++)
+    for (int i = 0; i < len / 128 + 1; i++)
     {
+        uint8_t read[128];
+        uint8_t tmpbuf[128];
+        startWire();
         Wire.beginTransmission(addr);
         Wire.write(0x02);
         Wire.write(0x01);
@@ -124,15 +123,21 @@ bool Twiboot::Verify(uint8_t *buf, int len)
         {
             if ((i * 128 + j) > len)
             {
-                break;
+                read[j] = 0xFF;
+                tbuf[j] = 0xFF;
             }
 
-            read[i * 128 + j] = Wire.read();
+            read[j] = Wire.read();
+            tbuf[j] = buf[i * 128 + j];
             j++;
+        }
+        if (crcFast(read, len) != crcFast(buf, len))
+        {
+            return false;
         }
     }
 
-    return checksum == crcFast(read, len);
+    return true;
 }
 
 void Twiboot::JumpToApp()
