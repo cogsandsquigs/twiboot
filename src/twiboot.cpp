@@ -84,7 +84,7 @@ void Twiboot::Flash(uint8_t *buf, int len)
 {
     startWire();
 
-    int numPages = numPagesInLen(len) - 1;
+    int numPages = numPagesInLen(len);
 
     for (int i = 0; i < numPages; i++)
     {
@@ -96,11 +96,11 @@ void Twiboot::Flash(uint8_t *buf, int len)
 
         for (int j = i * 128; j < (i + 1) * 128; j++)
         {
-            if ((i == numPages - 1) && ((128 - len % 128) != 0) && j >= len)
+            if ((i == numPages - 1) && ((len % 128) != 0) && j >= len)
             {
                 Wire.write(0xFF);
             }
-            else if ((i == numPages - 1) && ((128 - len % 128) != 0))
+            else if ((i == numPages - 1) && ((len % 128) != 0))
             {
                 break;
             }
@@ -122,6 +122,7 @@ bool Twiboot::Verify(uint8_t *buf, int len)
 
     for (int i = 0; i < numPagesInLen(len); i++)
     {
+
         uint8_t read[128];
         uint8_t tbuf[128];
         startWire();
@@ -133,20 +134,22 @@ bool Twiboot::Verify(uint8_t *buf, int len)
         Wire.endTransmission();
         Wire.requestFrom(addr, 128);
 
-        while (!Wire.available())
-            ;
-
         for (int j = 0; j < 128; j++)
         {
+
+            while (!Wire.available())
+                ;
+
             if ((i * 128 + j) > len)
             {
                 read[j] = 0xFF;
                 tbuf[j] = 0xFF;
             }
-
-            read[j] = Wire.read();
-            tbuf[j] = buf[i * 128 + j];
-            j++;
+            else
+            {
+                read[j] = Wire.read();
+                tbuf[j] = buf[i * 128 + j];
+            }
         }
 
         if (crcFast(read, 128) != crcFast(tbuf, 128))
