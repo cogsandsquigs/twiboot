@@ -72,7 +72,9 @@ void Twiboot::Flash(uint8_t *buf, int len)
 {
     startWire();
 
-    for (int i = 0; i < (len / 128) + 1; i++)
+    int numPages = numPagesInLen(len) - 1;
+
+    for (int i = 0; i < numPages; i++)
     {
         Wire.beginTransmission(addr);
         Wire.write(0x02);
@@ -82,11 +84,11 @@ void Twiboot::Flash(uint8_t *buf, int len)
 
         for (int j = i * 128; j < (i + 1) * 128; j++)
         {
-            if ((i == (len / 128)) && ((128 - len % 128) != 0) && j >= len)
+            if ((i == numPages - 1) && ((128 - len % 128) != 0) && j >= len)
             {
                 Wire.write(0xFF);
             }
-            else if ((i == (len / 128)) && ((128 - len % 128) != 0))
+            else if ((i == numPages - 1) && ((128 - len % 128) != 0))
             {
                 break;
             }
@@ -106,7 +108,7 @@ bool Twiboot::Verify(uint8_t *buf, int len)
 {
     crcInit(); // has to be called before crcFast() to update the CRC tables
 
-    for (int i = 0; i < len / 128 + 1; i++)
+    for (int i = 0; i < numPagesInLen(len); i++)
     {
         uint8_t read[128];
         uint8_t tbuf[128];
@@ -150,4 +152,16 @@ void Twiboot::JumpToApp()
     Wire.write(0x01);
     Wire.write(0x80);
     Wire.endTransmission();
+}
+
+int numPagesInLen(int len)
+{
+    if (len % 128 == 0)
+    {
+        return len / 128;
+    }
+    else
+    {
+        return (len / 128) + 1;
+    }
 }
