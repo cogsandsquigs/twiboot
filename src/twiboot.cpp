@@ -100,10 +100,6 @@ void Twiboot::Flash(uint8_t *buf, int len)
             {
                 Wire.write(0xFF);
             }
-            else if ((i == numPages - 1) && ((len % 128) != 0))
-            {
-                break;
-            }
             else
             {
                 Wire.write(buf[j]);
@@ -140,7 +136,7 @@ bool Twiboot::Verify(uint8_t *buf, int len)
             while (!Wire.available())
                 ;
 
-            if ((i * 128 + j) > len)
+            if ((i * 128 + j) >= len)
             {
                 read[j] = 0xFF;
                 tbuf[j] = 0xFF;
