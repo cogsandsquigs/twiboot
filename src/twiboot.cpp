@@ -118,6 +118,7 @@ bool Twiboot::Verify(uint8_t *buf, int len)
         Wire.write((i * 128) & 0xFF);
         Wire.endTransmission();
         Wire.requestFrom(addr, 128);
+
         int j = 0;
         while (Wire.available())
         {
@@ -131,7 +132,8 @@ bool Twiboot::Verify(uint8_t *buf, int len)
             tbuf[j] = buf[i * 128 + j];
             j++;
         }
-        if (crcFast(read, len) != crcFast(buf, len))
+
+        if (crcFast(read, 128) != crcFast(tbuf, 128))
         {
             return false;
         }
