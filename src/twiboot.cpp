@@ -10,6 +10,18 @@ inline void startWire()
     }
 }
 
+int numPagesInLen(int len)
+{
+    if (len % 128 == 0)
+    {
+        return len / 128;
+    }
+    else
+    {
+        return (len / 128) + 1;
+    }
+}
+
 Twiboot::Twiboot()
 {
     this->addr = 0x29;
@@ -152,16 +164,4 @@ void Twiboot::JumpToApp()
     Wire.write(0x01);
     Wire.write(0x80);
     Wire.endTransmission();
-}
-
-int numPagesInLen(int len)
-{
-    if (len % 128 == 0)
-    {
-        return len / 128;
-    }
-    else
-    {
-        return (len / 128) + 1;
-    }
 }
