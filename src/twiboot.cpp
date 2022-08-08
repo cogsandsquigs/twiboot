@@ -109,7 +109,7 @@ bool Twiboot::Verify(uint8_t *buf, int len)
     for (int i = 0; i < len / 128 + 1; i++)
     {
         uint8_t read[128];
-        uint8_t tmpbuf[128];
+        uint8_t tbuf[128];
         startWire();
         Wire.beginTransmission(addr);
         Wire.write(0x02);
