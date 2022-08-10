@@ -73,7 +73,7 @@ endif
 # ---------------------------------------------------------------------------
 
 CFLAGS = -pipe -g -Os -mmcu=$(MCU) -Wall -fdata-sections -ffunction-sections
-CFLAGS += -Wa,-adhlns=$(*F).lst -DTWI_ADDRESS=0x30 -DBOOTLOADER_START=$(BOOTLOADER_START) $(CFLAGS_TARGET)
+CFLAGS += -Wa,-adhlns=$(*F).lst -DBOOTLOADER_START=$(BOOTLOADER_START) $(CFLAGS_TARGET)
 LDFLAGS = -Wl,-Map,$(@:.elf=.map),--cref,--relax,--gc-sections,--section-start=.text=$(BOOTLOADER_START)
 LDFLAGS += -nostartfiles
 
