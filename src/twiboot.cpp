@@ -125,11 +125,16 @@ bool Twiboot::GetChipInfo(uint64_t *signature, uint8_t *pageSize, uint16_t *flas
 
 bool Twiboot::ReadFlashPage(uint8_t *buf, uint16_t page)
 {
+
+    byte tmp[4] = {
+        0x02,
+        0x01,
+        (uint8_t)((page * page_size) >> 8 & 0xFF),
+        (uint8_t)((page * page_size) & 0xFF),
+    };
+
     Wire.beginTransmission(addr);
-    Wire.write(0x02);
-    Wire.write(0x01);
-    Wire.write((page * page_size) >> 8 & 0xFF);
-    Wire.write((page * page_size) & 0xFF);
+    Wire.write(tmp, 4);
 
     if (Wire.endTransmission() != 0) // if there are any errors, return false. Otherwise, return true.
         return false;
@@ -153,8 +158,8 @@ bool Twiboot::WriteFlash(uint8_t *buf, int len, uint16_t page)
         byte tmp[page_size + 4] = {
             0x02,
             0x01,
-            ((i + page) * page_size) >> 8 & 0xFF,
-            ((i + page) * page_size) & 0xFF,
+            (uint8_t)((((i + page) * page_size) >> 8) & 0xFF),
+            (uint8_t)(((i + page) * page_size) & 0xFF),
         };
 
         for (int j = 0; j < page_size; j++)
